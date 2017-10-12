@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">knapsack_simulation</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="values_hint">Enter number of values</string>
+    <string name="weights_hint">Enter number of weights</string>
+    <string name="values_array_hint">Enter the values[1 33 44]</string>
+    <string name="weights_array_hint">Enter the weights[22 33 44]</string>
+    <string name="max_weight_hint">Enter the maximum weight</string>
+    <string name="submit">Submit</string>
+    <string name="title_activity_result">ResultActivity</string>
+    <string name="computational_complexity">Computaional Complexity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
