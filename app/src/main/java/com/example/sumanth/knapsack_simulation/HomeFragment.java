@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -31,11 +34,12 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    int k[][];
     private OnFragmentInteractionListener mListener;
     Button submit;
     int weights_count,values_count,max_weight,weights_array[],values_array[];
     int knapsack_matrix[][];
+    int array[];
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -71,33 +75,92 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        submit = (Button)view.findViewById(R.id.submit);
+        final View v = inflater.inflate(R.layout.fragment_home, container, false);
+        submit = (Button)v.findViewById(R.id.submit);
         final Bundle bundle = new Bundle();
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                weights_count = Integer.parseInt(((EditText)view.findViewById(R.id.weights_count)).getText().toString().trim());
-                values_count = Integer.parseInt(((EditText)view.findViewById(R.id.values_count)).getText().toString().trim());
-                max_weight = Integer.parseInt(((EditText)view.findViewById(R.id.max_weight)).getText().toString());
-                String array[] = ((EditText)view.findViewById(R.id.weights_array)).getText().toString().trim().split(" ");
-                convertStringToIntArray(array,weights_array);
-                array = ((EditText)view.findViewById(R.id.values_array)).getText().toString().trim().split(" ");
-                convertStringToIntArray(array,values_array);
-                int result = knapsack(max_weight,weights_array,values_array,weights_count);
-                Intent intent = new Intent(getActivity(),ResultActivity.class);
-                startActivity(intent);
-                intent.putExtra("result",result);
+                String value1 = ((EditText) v.findViewById(R.id.weights_count)).getText().toString().trim();
+                String value2 = ((EditText) v.findViewById(R.id.values_count)).getText().toString().trim();
+                String value3 = ((EditText) v.findViewById(R.id.max_weight)).getText().toString();
+                String value4 = ((EditText) v.findViewById(R.id.weights_array)).getText().toString();
+                String value5 = ((EditText) v.findViewById(R.id.values_array)).getText().toString();
+                if (value1.isEmpty() || value2.isEmpty() || value3.isEmpty() || value4.isEmpty() || value5.isEmpty()) {
+                    Toast.makeText(getActivity(), "One of the fields is empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    weights_count = Integer.parseInt(value1);
+                    values_count = Integer.parseInt(value2);
+                    max_weight = Integer.parseInt(value3);
+                    String array[] = value4.split(" ");
+                    String[] weights_array_string = array;
+                    weights_array = new int[array.length];
+                    for(int i=0;i<array.length;i++)
+                    {
+                        weights_array[i] = Integer.parseInt(array[i]);
+                    }
+                    //convertStringToIntArray(array, weights_array);
+                    array = value5.split(" ");
+                    String[] values_array_string = array;
+                    values_array = new int[array.length];
+                    for(int j=0;j<array.length;j++)
+                    {
+                        values_array[j] = Integer.parseInt(array[j]);
+                    }
+                    //convertStringToIntArray(array, values_array);
+                    if (weights_count != values_count) {
+                        Toast.makeText(getActivity(), "Number of values and number of weights do not match", Toast.LENGTH_SHORT).show();
+                    }
+                    if (weights_array.length != weights_count) {
+                        Toast.makeText(getActivity(), "Number of weights and its count entered do not match", Toast.LENGTH_SHORT).show();
+                    }
+                    if (values_array.length != values_count) {
+                        Toast.makeText(getActivity(), "Number of values and its count entered do not match", Toast.LENGTH_SHORT).show();
+                    } else {
+                        k = new int[weights_count+1][max_weight+1];
+                        array = new String[(weights_count+1)*(max_weight+1)];
+                        int result = knapsack(max_weight, weights_array, values_array, weights_count);
+                        //Intent intent = new Intent(getActivity(), ResultActivity.class);
+                        //startActivity(intent);
+                        //intent.putExtra("result", result);
+                        convert2dtoarray(array,k);
+                        Bundle arguments = new Bundle();
+                        arguments.putString("result",String.valueOf(result));
+                        arguments.putString("weights_count",String.valueOf(weights_count));
+                        arguments.putString("max_weight",String.valueOf(max_weight));
+                        arguments.putStringArray("array",array);
+                        arguments.putStringArray("weights_array",weights_array_string);
+                        arguments.putStringArray("values_array",values_array_string);
+                        Fragment fragment = new FragmentResult();
+                        fragment.setArguments(arguments);
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.home_frame, fragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                }
             }
         });
 
-
-        return view;
+        return v;
+    }
+    public void convert2dtoarray(String[] array,int k[][])
+    {
+        int m=0;
+        for(int i=0;i<k.length;i++)
+        {
+            for(int j=0;j<k[0].length;j++)
+            {
+                array[i] = String.valueOf(k[i][j]);
+            }
+        }
     }
 
     public void convertStringToIntArray(String array[],int storeArray[])
     {
+        storeArray = new int[array.length];
         for(int i=0;i<array.length;i++)
         {
             storeArray[i]=Integer.parseInt(array[i]);
@@ -107,8 +170,7 @@ public class HomeFragment extends Fragment {
     public int knapsack(int max_weight,int []weights_array,int []values_array,int n)
     {
         int i,weight;
-        int k[][] = new int[n+1][max_weight+1];
-
+       // int k[][] = new int[n+1][max_weight+1];
         for(i=0;i<=n;i++)
         {
             for(weight=0;weight<=max_weight;weight++)

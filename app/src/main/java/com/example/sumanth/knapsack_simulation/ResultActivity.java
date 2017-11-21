@@ -19,9 +19,6 @@ public class ResultActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        int result = getIntent().getIntExtra("result",0);
-        TextView result_text = (TextView)findViewById(R.id.result);
-        result_text.setText("Maximum value that can fit into maximum weight is: "+result);
     }
 
 }

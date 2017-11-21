@@ -21,7 +21,8 @@ public class MainActivity extends AppCompatActivity
         HomeFragment.OnFragmentInteractionListener,
         IntroductionFragment.OnFragmentInteractionListener,
         TheoryFragment.OnFragmentInteractionListener,
-        PseudocodeFragment.OnFragmentInteractionListener {
+        PseudocodeFragment.OnFragmentInteractionListener,
+        FragmentResult.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +80,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

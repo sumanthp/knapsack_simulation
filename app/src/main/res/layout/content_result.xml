@@ -9,11 +9,6 @@
     tools:showIn="@layout/activity_result"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/result"
-        android:textStyle="bold"
-        android:textSize="30sp"/>
+
 
 </LinearLayout>
